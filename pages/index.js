@@ -17,7 +17,7 @@ export default function Home({ data, serverError }) {
   const [pets, setPets] = useState(data);
   const [error, setError] = useState(serverError)
 
-  const [mutate] = useMutation((id) => fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets/like/${id}34`, { method: 'PATCH' }));
+  const [mutate] = useMutation((id) => fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets/like/${id}`, { method: 'PATCH' }));
 
   const likeHandler = async (id) => {
     try {
