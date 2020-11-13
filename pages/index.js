@@ -1,9 +1,17 @@
 import fetch from 'node-fetch';
-import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 import { Card } from '../components';
 import { useMutation } from 'react-query';
 import { useState } from 'react';
 
+
+const fadeInVariant = {
+  exit: { opacity: 0, transition: { duration: 0.5 } },
+  enter: {
+    opacity: 1,
+    transition: { delay: 0.1, duration: 1.5 }
+  }
+};
 
 export default function Home({ data }) {
   const [pets, setPets] = useState(data);
@@ -21,13 +29,13 @@ export default function Home({ data }) {
       setPets({ ...pets, [id]: { ...pets[id], likes: pets[id].likes += 1 } });
     } catch (e) {
       console.log(e.message)
-      console.log('holas')
     }
   }
 
   return (
     // <div className="container mx-auto">
-      <div className="w-full flex flex-wrap justify-center animate-fadeIn">
+    <motion.div initial="exit" animate="enter" exit="exit">
+      <motion.div className="w-full flex flex-col sm:flex-col md:flex-row content-center sm:content-center flex-wrap justify-center" variants={fadeInVariant}>
         {
           Object.keys(pets)
             .map(key => <Card
@@ -44,8 +52,8 @@ export default function Home({ data }) {
             />
             )
         }
-      </div>
-    // </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

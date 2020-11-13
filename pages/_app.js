@@ -1,9 +1,10 @@
 import Head from 'next/head';
+import { AnimatePresence } from 'framer-motion';
 import { Navbar } from '../components';
 import '../styles/globals.css';
 import '../styles/tailwind.css';
 
-const MyApp = ({ Component, pageProps }) => (
+const MyApp = ({ Component, pageProps, router }) => (
   <>
     <Head>
       <link
@@ -15,7 +16,9 @@ const MyApp = ({ Component, pageProps }) => (
     </Head>
     <Navbar />
     <div className="container mx-auto">
-      <Component {...pageProps} />
+      <AnimatePresence exitBeforeEnter>
+        <Component {...pageProps} key={router.route} />
+      </AnimatePresence>
     </div>
   </>
 );

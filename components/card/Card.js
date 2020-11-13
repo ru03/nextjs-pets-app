@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { AnimalIcon, GenderIcon, Icon } from '../';
 
 const Card = ({ age, gender, id, img, likes, name, link, type, onLike }) => (
-  <div className="w-1/4 m-1 rounded overflow-hidden shadow-lg">
-    <Link href={link}>
-      <img className="w-full h-64" src={img} alt="Sunset in the mountains" />
+  <div className="w-1/2 sm:w-1/2 md:w-1/4 m-1 rounded overflow-hidden shadow-lg">
+    <Link href={link} as={link}>
+      <img className="w-full h-64 cursor-pointer" src={img} alt="Sunset in the mountains" />
     </Link>
     <div className="px-6 py-4">
       <div className="font-bold text-4xl mb-2">{name}</div>
