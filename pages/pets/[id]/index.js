@@ -14,30 +14,42 @@ const enterVariants = {
 
 const PetDetail = ({ pet }) => (
   <motion.div initial="exit" animate="enter" exit="exit" variants={enterVariants}>
-      <DetailCard
-        age={pet.age}
-        description={pet.description}
-        gender={pet.gender}
-        hasGoBack
-        height={pet.height}
-        img={pet.image}
-        likes={pet.likes}
-        name={pet.name}
-        type={pet.type}
-        weight={pet.weight}
-      />
+    <DetailCard
+      age={pet.age}
+      description={pet.description}
+      gender={pet.gender}
+      hasGoBack
+      height={pet.height}
+      img={pet.image}
+      likes={pet.likes}
+      name={pet.name}
+      type={pet.type}
+      weight={pet.weight}
+    />
   </motion.div>
 );
 
 export default PetDetail;
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, res }) {
   const id = params.id;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets/${id}`);
-  const pet = await res.json();
-  return {
-    props: {
-      pet,
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets/${id}`);
+    if(!response.ok) {
+      res.statusCode = 404;
+      res.end('Not found')
+      return { props: {} };
     }
+    const pet = await response.json();
+    return {
+      props: {
+        pet,
+      }
+    }
+  } catch (e) {
+    res.setHeader('Location', '/');
+    res.statusCode = 302;
+    res.end();
+    return { props: {} };
   }
 }

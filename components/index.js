@@ -1,3 +1,4 @@
+export { default as Alert } from './alert/Alert';
 export { default as AnimalIcon } from './animalIcon/AnimalIcon';
 export { default as Card } from './card/Card';
 export { default as DetailCard } from './detailCard/DetailCard';
