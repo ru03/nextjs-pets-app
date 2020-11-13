@@ -1,65 +1,60 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import fetch from 'node-fetch';
+import { useRouter } from 'next/router';
+import { Card } from '../components';
+import { useMutation } from 'react-query';
+import { useState } from 'react';
 
-export default function Home() {
+
+export default function Home({ data }) {
+  const [pets, setPets] = useState(data);
+
+  const [mutate] = useMutation((id) => fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets/like/${id}`, { method: 'PATCH' }));
+
+  const likeHandler = async (id) => {
+    console.log(id)
+    try {
+      const res = await mutate(id);
+      if (!res.ok) {
+        console.log('ERROR');
+        return;
+      }
+      setPets({ ...pets, [id]: { ...pets[id], likes: pets[id].likes += 1 } });
+    } catch (e) {
+      console.log(e.message)
+      console.log('holas')
+    }
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    // <div className="container mx-auto">
+      <div className="w-full flex flex-wrap justify-center animate-fadeIn">
+        {
+          Object.keys(pets)
+            .map(key => <Card
+              key={key}
+              id={key}
+              age={pets[key].age}
+              gender={pets[key].gender}
+              name={pets[key].name}
+              likes={pets[key].likes}
+              img={pets[key].image}
+              type={pets[key].type}
+              link={`/pets/${key}`}
+              onLike={() => likeHandler(key)}
+            />
+            )
+        }
+      </div>
+    // </div>
+  );
+}
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+export async function getServerSideProps(_) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pets`);
+  const data = await res.json();
+  return {
+    props: {
+      data,
+    }
+  }
 }
